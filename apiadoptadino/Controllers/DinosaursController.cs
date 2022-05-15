@@ -30,7 +30,7 @@ namespace apiadoptadino.Controllers
 
         // GET: api/Dinosaurs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dinosaur>> GetDinosaur(string id)
+        public async Task<ActionResult<Dinosaur>> GetDinosaur(int id)
         {
             var dinosaur = await _context.Dinosaur.FindAsync(id);
 
@@ -45,9 +45,10 @@ namespace apiadoptadino.Controllers
         // PUT: api/Dinosaurs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDinosaur(string id, Dinosaur dinosaur)
+        public async Task<IActionResult> PutDinosaur(int id, Dinosaur dinosaur)
         {
-            if (id != dinosaur.Name)
+            dinosaur.Id = id;
+            if (id != dinosaur.Id)
             {
                 return BadRequest();
             }
@@ -79,28 +80,14 @@ namespace apiadoptadino.Controllers
         public async Task<ActionResult<Dinosaur>> PostDinosaur(Dinosaur dinosaur)
         {
             _context.Dinosaur.Add(dinosaur);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (DinosaurExists(dinosaur.Name))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDinosaur", new { id = dinosaur.Name }, dinosaur);
+            return CreatedAtAction("GetDinosaur", new { id = dinosaur.Id }, dinosaur);
         }
 
         // DELETE: api/Dinosaurs/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDinosaur(string id)
+        public async Task<IActionResult> DeleteDinosaur(int id)
         {
             var dinosaur = await _context.Dinosaur.FindAsync(id);
             if (dinosaur == null)
@@ -114,9 +101,9 @@ namespace apiadoptadino.Controllers
             return NoContent();
         }
 
-        private bool DinosaurExists(string id)
+        private bool DinosaurExists(int id)
         {
-            return _context.Dinosaur.Any(e => e.Name == id);
+            return _context.Dinosaur.Any(e => e.Id == id);
         }
     }
 }

@@ -30,7 +30,7 @@ namespace apiadoptadino.Controllers
 
         // GET: api/TypeDinos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TypeDino>> GetTypeDino(string id)
+        public async Task<ActionResult<TypeDino>> GetTypeDino(int id)
         {
             var typeDino = await _context.TypeDino.FindAsync(id);
 
@@ -45,9 +45,9 @@ namespace apiadoptadino.Controllers
         // PUT: api/TypeDinos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTypeDino(string id, TypeDino typeDino)
+        public async Task<IActionResult> PutTypeDino(int id, TypeDino typeDino)
         {
-            if (id != typeDino.TypeName)
+            if (id != typeDino.Id)
             {
                 return BadRequest();
             }
@@ -79,28 +79,14 @@ namespace apiadoptadino.Controllers
         public async Task<ActionResult<TypeDino>> PostTypeDino(TypeDino typeDino)
         {
             _context.TypeDino.Add(typeDino);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TypeDinoExists(typeDino.TypeName))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTypeDino", new { id = typeDino.TypeName }, typeDino);
+            return CreatedAtAction("GetTypeDino", new { id = typeDino.Id }, typeDino);
         }
 
         // DELETE: api/TypeDinos/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTypeDino(string id)
+        public async Task<IActionResult> DeleteTypeDino(int id)
         {
             var typeDino = await _context.TypeDino.FindAsync(id);
             if (typeDino == null)
@@ -114,9 +100,9 @@ namespace apiadoptadino.Controllers
             return NoContent();
         }
 
-        private bool TypeDinoExists(string id)
+        private bool TypeDinoExists(int id)
         {
-            return _context.TypeDino.Any(e => e.TypeName == id);
+            return _context.TypeDino.Any(e => e.Id == id);
         }
     }
 }
